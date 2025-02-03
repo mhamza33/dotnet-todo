@@ -1,0 +1,138 @@
+﻿@page
+@model UserSettingsModel
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kit.fontawesome.com/a131047cd6.js" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+
+        var userRoles = [
+            { name: "Action Log", children: ['Dummy  1', 'Dummy  1', 'Dummy  1'] },
+            { name: "Administration", children: ['Dummy  1', 'Dummy  1', 'Dummy  1'] },
+            { name: "Allocation", children: ['Dummy  1', 'Dummy  1', 'Dummy  1'] },
+            {
+                name: "Budgeting",
+                children: [
+                    "Elevated Role",
+                    "Procurement Reviewer Role",
+                    "Procurement Role",
+                    "ReadOnly Role",
+                    "Reviewer Role",
+                    "Standard Role"
+                ]
+            },
+            {
+                name: "Commercial Kit List",
+                children: [
+                    "Elevated Role",
+                    "ReadOnly Role"
+                ]
+            },
+            {
+                name: "Contract Item Overview",
+                children: [
+                    "Overview ReadOnly Role",
+                    "Overview Standard Role"
+                ]
+            },
+            {
+                name: "Dynamic Invoice",
+                children: [
+                    "Generation Elevated Role",
+                    "Generation Posting Role",
+                    "Generation ReadOnly Role",
+                    "Generation Standard Role",
+                    "Generation Super Role",
+                    "Run Authorise Role",
+                    "Run Batch Posting Role",
+                    "Run ReadOnly Role"
+                ]
+            },
+            { name: "Email Log", children: ['Dummy  1', 'Dummy  1', 'Dummy  1', 'Dummy  1'] },
+            { name: "Engineering Kit List", children: ['Dummy  1', 'Dummy  1', 'Dummy  1', 'Dummy  1'] },
+            {
+                name: "Goods In",
+                children: [
+                    "Batch Return Role",
+                    "ReadOnly Role",
+                    "Serial Number Return Role",
+                    "Standard Role",
+                    "Textline Return Role"
+                ]
+            },
+            { name: "Invoice Approval", children: ['Dummy  1', 'Dummy  1', 'Dummy  1'] }
+        ];
+
+        function generateUserRoles() {
+            var html = "<ul class='list-unstyled'>";
+            userRoles.forEach(function (role) {
+                html += `<li>
+                        <span class="toggle-section">▶</span> ${role.name}
+                        <ul class="nested-list">`;
+                role.children.forEach(function (subRole) {
+                    html += `<li>
+                            <input type="checkbox" class="role-checkbox"> ${role.name} ${subRole}
+                         </li>`;
+                });
+                html += `</ul></li>`;
+            });
+            html += "</ul>";
+            $("#userRolesList").html(html);
+        }
+
+        generateUserRoles();
+
+        $("#expandAll").click(function () {
+            $(".nested-list").show();
+            $(".toggle-section").text("▼");
+        });
+
+        $("#collapseAll").click(function () {
+            $(".nested-list").hide();
+            $(".toggle-section").text("▶");
+        });
+
+        $(document).on("click", ".toggle-section", function () {
+            $(this).siblings(".nested-list").toggle();
+            $(this).text($(this).text() === "▶" ? "▼" : "▶");
+        });
+
+        $("#clearRoles").click(function () {
+            $(".role-checkbox").prop("checked", false);
+        });
+
+        $("#inheritRoles").click(function () {
+            $(".role-checkbox").prop("checked", false);
+            $(".role-checkbox").each(function () {
+                if ($(this).parent().text().includes("ReadOnly")) {
+                    $(this).prop("checked", true);
+                }
+            });
+        });
+    });
+</script>
+
+@{
+    ViewData["Title"] = "User Settings";
+}
+
+<div class="boxt container mt-5">
+    @* <h1>@ViewData["Title"]</h1> *@
+
+    <h2 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 44px; font-weight: 100;"
+        class="mb-4 text-end">
+        User Settings</h2>
+
+    <h4>User Roles</h4>
+    <div style="width:100%" class="mb-3 d-flex justify-content-between">
+        <div>
+            <button class="btn btn-primary" id="expandAll">Expand All</button>
+            <button class="btn btn-primary" id="collapseAll">Collapse All</button>
+        </div>
+        <div>
+            <button class="btn btn-warning" id="clearRoles">Clear Roles</button>
+            <button class="btn btn-info" id="inheritRoles">Inherit Roles</button>
+        </div>
+    </div>
+
+    <div id="userRolesList"></div>
+</div>

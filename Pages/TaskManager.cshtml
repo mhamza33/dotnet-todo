@@ -1,12 +1,12 @@
-﻿@page
-@model PrivacyModel
+﻿@* @page
+@model TaskManagerModel
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
         let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
         renderTasks();
 
-    @* $("#addTaskBtn").click(function () {
+        $("#addTaskBtn").click(function () {
             let taskText = $("#inputTask").val().trim();
             if (taskText === "") return;
 
@@ -15,27 +15,7 @@
 
             renderTasks();
             $("#inputTask").val("");
-        }); *@
-
-            $("#addTaskBtn").click(addTask);
-
-        $("#inputTask").keypress(function (event) {
-            if (event.which === 13) {
-                event.preventDefault();
-                addTask();
-            }
         });
-
-        function addTask() {
-            let taskText = $("#inputTask").val().trim();
-            if (taskText === "") return;
-
-            tasks.push({ text: taskText, completed: false });
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-
-            renderTasks();
-            $("#inputTask").val("");
-        }
 
         function renderTasks() {
             $("#taskList").empty();
@@ -71,14 +51,14 @@
 </script>
 
 @{
-    ViewData["Title"] = "New Task";
+    ViewData["Title"] = "TaskManager Page";
 }
 
 
 
 <h1>@ViewData["Title"]</h1>
 
-<p>Create a new tasks.</p>
+<p>You are on task TaskManager page.</p>
 <form class="row g-3" id="taskForm">
     <div class="col-auto">
         <input type="text" class="form-control" id="inputTask" placeholder="Write a new task!">
@@ -90,4 +70,47 @@
 
 <ul class="list-group" id="taskList">
 
+</ul> *@
+
+
+
+
+@page
+@model TaskManagerModel
+@{
+    ViewData["Title"] = "Page is Task Manager";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<!-- Task Input Form -->
+<form method="post">
+    <div class="input-group mb-3">
+        <input type="text" name="NewTask" class="form-control" placeholder="Write a new task!" required />
+        <button type="submit" class="btn btn-primary">Create Task </button>
+    </div>
+</form>
+
+<!-- Task List -->
+<ul class="list-group">
+    @foreach (var task in Model.Tasks)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <!-- Toggle Completion -->
+            <form method="post" asp-page-handler="Toggle">
+                <input type="checkbox" name="taskId" value="@task.Id" />
+                <button type="submit" class="btn btn-link p-0">
+                    <span style="@(task.Completed ? "text-decoration: line-through; color: gray;" : "")">
+                        @task.Text
+                    </span>
+                </button>
+            </form>
+
+            <!-- Delete Task -->
+            <form method="post" asp-page-handler="Delete">
+                <input type="hidden" name="taskId" value="@task.Id" />
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+        </li>
+    }
 </ul>
